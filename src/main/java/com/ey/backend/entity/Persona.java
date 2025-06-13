@@ -34,14 +34,13 @@ public class Persona {
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Residenza> residenze = new ArrayList<>();
 
-    // Metodi helper per mantenere la consistenza della relazione bidirezionale
-    public void addResidenza(Persona persona, Residenza residenza) {
-        persona.getResidenze().add(residenza);
-        residenza.setPersona(persona);
+    public void addResidenza(Residenza residenza) {
+        this.residenze.add(residenza);
+        residenza.setPersona(this);
     }
 
-    public void removeResidenza(Persona persona, Residenza residenza) {
-        persona.getResidenze().remove(residenza);
+    public void removeResidenza(Residenza residenza) {
+        this.residenze.remove(residenza);
         residenza.setPersona(null);
     }
 }

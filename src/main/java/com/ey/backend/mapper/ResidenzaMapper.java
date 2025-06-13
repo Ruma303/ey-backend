@@ -29,7 +29,6 @@ public class ResidenzaMapper {
         return residenzaResponse;
     }
 
-    // Metodo per aggiornare un'entità Residenza esistente con dati da ResidenzaRequest
     public void updateEntityFromDto(ResidenzaRequest residenzaRequest, Residenza residenza) {
         residenza.setIndirizzo(residenzaRequest.getIndirizzo());
         residenza.setCap(residenzaRequest.getCap());

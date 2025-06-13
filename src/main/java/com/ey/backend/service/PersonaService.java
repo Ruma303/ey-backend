@@ -2,34 +2,66 @@ package com.ey.backend.service;
 
 import com.ey.backend.dto.PersonaRequest;
 import com.ey.backend.dto.PersonaResponse;
+import com.ey.backend.mapper.PersonaMapper;
+import com.ey.backend.entity.Persona;
 import com.ey.backend.repository.PersonaRepository;
-import com.ey.backend.repository.ResidenzaRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class PersonaService {
 
     private PersonaRepository personaRepository;
-    private ResidenzaRepository residenzaRepository;
+    private PersonaMapper personaMapper;
 
-    // recupera la lista delle persone presenti nel db
+    @Transactional(readOnly = true)
     public List<PersonaResponse> getAllPersone() {
+        return personaRepository.findAll().stream()
+                .map(personaMapper::toResponseDto)
+                .collect(Collectors.toList());
     }
 
-    // recupera una persona presente nel DB
-    public PersonaResponse getPersonaById(Long id) {}
+    @Transactional(readOnly = true)
+    public PersonaResponse getPersonaById(Long id) {
+        Persona persona = personaRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Persona con ID " + id + " non trovata."));
+        return personaMapper.toResponseDto(persona);
+    }
 
-   // aggiungere nuova persona nel DB
-    public PersonaResponse addPersona(PersonaRequest personaRequest) {}
+    @Transactional
+    public PersonaResponse addPersona(PersonaRequest personaRequest) {
+        Persona persona = personaMapper.toEntity(personaRequest);
+        Persona savedPersona = personaRepository.save(persona);
+        return personaMapper.toResponseDto(savedPersona);
+    }
 
-    // aggiornare dettagli persona nel DB
-    public PersonaResponse updatePersona(Long id, PersonaRequest personaRequest) {}
+    @Transactional
+    public PersonaResponse updatePersona(Long id, PersonaRequest personaRequest) {
+        Persona personaToUpdate = personaRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Persona con ID " + id + " non trovata per l'aggiornamento."));
+        personaMapper.updateEntityFromDto(personaRequest, personaToUpdate);// 3. Salva la Persona aggiornata nel database
+        Persona updatedPersona = personaRepository.save(personaToUpdate);
+        return personaMapper.toResponseDto(updatedPersona);
+    }
+    @Transactional
+    public void deletePersona(Long id) {
+        if (!personaRepository.existsById(id)) {
+            throw new NoSuchElementException("Persona con ID " + id + " non trovata per l'eliminazione.");
+        }
+        personaRepository.deleteById(id);
+    }
 
-    // cancellare una Persona nel DB
-    public void deletePersona(Long id) {}
-
+    @Transactional(readOnly = true)
+    public List<PersonaResponse> getPersoneByIndirizzo(String indirizzo) {
+        List<Persona> persone = personaRepository.findPersoneByIndirizzo(indirizzo);
+        return persone.stream()
+                .map(personaMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
 }
