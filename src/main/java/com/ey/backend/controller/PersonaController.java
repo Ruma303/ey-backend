@@ -1,5 +1,6 @@
 package com.ey.backend.controller;
 
+import com.ey.backend.dto.PersonaRequest;
 import com.ey.backend.dto.PersonaResponse;
 import com.ey.backend.dto.ResidenzaRequest;
 import com.ey.backend.dto.ResidenzaResponse;
@@ -31,6 +32,18 @@ public class PersonaController {
     public ResponseEntity<Void> deletePersona(@PathVariable Long id) {
         personaService.deletePersona(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping
+    public ResponseEntity<PersonaResponse> createPersona(@Valid @RequestBody PersonaRequest personaRequest) {
+        PersonaResponse nuovaPersona = personaService.addPersona(personaRequest);
+        return new ResponseEntity<>(nuovaPersona, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PersonaResponse> updatePersona(@PathVariable Long id, @Valid @RequestBody PersonaRequest personaRequest) {
+        PersonaResponse personaAggiornata = personaService.updatePersona(id, personaRequest);
+        return ResponseEntity.ok(personaAggiornata);
     }
 
     @PostMapping("/{personaId}/residenze")
