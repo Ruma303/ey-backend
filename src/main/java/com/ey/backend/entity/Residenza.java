@@ -20,7 +20,7 @@ public class Residenza {
     private String indirizzo;
 
     @Column(name="cap", nullable = false)
-    private Short cap;
+    private String cap;
 
     @Column(name="citta", nullable = false)
     private String citta;

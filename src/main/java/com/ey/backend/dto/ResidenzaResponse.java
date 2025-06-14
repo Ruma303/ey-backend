@@ -8,7 +8,7 @@ import lombok.Setter;
 public class ResidenzaResponse {
     private Long id;
     private String indirizzo;
-    private Short cap;
+    private String cap;
     private String citta;
     private Long personaId;
 }
