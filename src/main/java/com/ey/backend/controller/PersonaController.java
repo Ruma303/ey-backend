@@ -87,7 +87,6 @@ public class PersonaController {
     }
 
     // controller per modificare l’indirizzo per una Persona presente nel DB
-    // URL: PUT /api/persone/residenze/{id} <- Modificato per evitare conflitto
     @PutMapping("/residenze/{id}")
     public ResponseEntity<ResidenzaResponse> updateResidenza(
             @PathVariable Long id, // Questo 'id' ora si riferisce all'ID della Residenza
@@ -97,7 +96,6 @@ public class PersonaController {
     }
 
     // controller per cancellare una Residenza nel DB
-    // URL: DELETE /api/persone/residenze/{id} <- Modificato per evitare conflitto
     @DeleteMapping("/residenze/{id}")
     public ResponseEntity<Void> deleteResidenza(@PathVariable Long id) { // Questo 'id' ora si riferisce all'ID della Residenza
         residenzaService.deleteResidenza(id);
