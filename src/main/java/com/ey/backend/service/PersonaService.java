@@ -45,10 +45,11 @@ public class PersonaService {
     public PersonaResponse updatePersona(Long id, PersonaRequest personaRequest) {
         Persona personaToUpdate = personaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Persona con ID " + id + " non trovata per l'aggiornamento."));
-        personaMapper.updateEntityFromDto(personaRequest, personaToUpdate);// 3. Salva la Persona aggiornata nel database
+        personaMapper.updateEntityFromDto(personaRequest, personaToUpdate);
         Persona updatedPersona = personaRepository.save(personaToUpdate);
         return personaMapper.toResponseDto(updatedPersona);
     }
+
     @Transactional
     public void deletePersona(Long id) {
         if (!personaRepository.existsById(id)) {
@@ -57,8 +58,16 @@ public class PersonaService {
         personaRepository.deleteById(id);
     }
 
+    /**
+     * Recupera la lista delle persone che vivono presso un certo indirizzo.
+     * La ricerca è basata solo sull'indirizzo.
+     *
+     * @param indirizzo L'indirizzo da cercare.
+     * @return Una lista di DTO PersonaResponse.
+     */
     @Transactional(readOnly = true)
     public List<PersonaResponse> getPersoneByIndirizzo(String indirizzo) {
+        // Chiama il metodo specifico nel PersonaRepository che usa una JOIN con Residenza
         List<Persona> persone = personaRepository.findPersoneByIndirizzo(indirizzo);
         return persone.stream()
                 .map(personaMapper::toResponseDto)
